@@ -74,7 +74,7 @@ def test_char_classification():
     for char, klass in test_pairs:
         assert get_char_class(char) is klass
         assert char in klass
-        assert char in klass()
+        assert char in klass(char)
 
 
 if __name__ == '__main__':
