@@ -7,6 +7,10 @@ logger = logging.getLogger('ipython')
 logger.setLevel('DEBUG')
 from igo.Tagger import Tagger
 
+DB = {}
+db_get = lambda k: DB.get(k, None)
+db_add = lambda k, v: DB.update({k: v})
+
 tagger = None
 def get_tagger():
     global tagger
@@ -45,6 +49,11 @@ class Word(Token):
         #logger.debug('instantiating {}'.format(repr(self)))
         self.subwords = []
         self.top = top
+        if db_get(self.value) is not None:
+            self = db_get(self.value)
+            return
+        else:
+            db_add(self.value, self)
         if not self.top:
             return
         tagger = get_tagger()
