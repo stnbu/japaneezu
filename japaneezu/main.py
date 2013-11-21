@@ -18,6 +18,46 @@ def get_tagger():
         tagger = Tagger('ipadic')
     return tagger
 
+char_classes = set()
+
+def _contains_char(obj, char):
+    num = ord(char)
+    return num >= obj.unichr_range[0] and num <= obj.unichr_range[1]
+
+class CharClassMaintainer(type):
+
+    def __new__(cls, classname, bases, classdict):
+        global char_classes
+        classobj = type.__new__(cls, classname, bases, classdict)
+        if classobj.__name__ != 'CharClass':  # Don't add the base class
+            char_classes.add(classobj)
+        return classobj
+
+    __contains__ = _contains_char
+
+class CharClass(object):
+
+    __metaclass__ = CharClassMaintainer
+    __contains__ = _contains_char
+
+
+class Kanji(CharClass):
+    unichr_range = ord(u'一'), 29000  # FIXME
+
+class Hiragana(CharClass):
+    unichr_range = ord(u'あ'), ord(u'ん')
+
+class Katakana(CharClass):
+    unichr_range = ord(u'ア'), ord(u'ン')
+
+def get_char_class(char):
+    global char_classes
+    for klass in char_classes:
+        if char in klass:
+            return klass
+    else:
+        raise ValueError(u'Could not find appropriate CharClass for {}'.format(char))
+
 class Token(object):
 
     def __init__(self, value, prev=None):

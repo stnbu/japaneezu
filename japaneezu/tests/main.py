@@ -21,7 +21,7 @@ def get_all_test_data():
             _TEST_DATA += _file.read().decode(encoding='UTF-16-LE', errors='replace')
     return _TEST_DATA
 
-def _run_all_tests():
+def test_class_Char():
 
     text = u'あいうえおイロハ漢字'
 
@@ -32,11 +32,13 @@ def _run_all_tests():
     try:
         badprev = type
         Char(value='x', prev=badprev)
-        logger.error('Able to init {} with prev={}.'.format(Char.__name__, badprev.__class__))
+        raise AssertionError('Able to init {} with prev={}.'.format(Char.__name__, badprev.__class__))
     except ValueError:
         pass
 
     assert Char('x') == Char('x')
+
+def test_class_Word():
 
     words = ['three', 'two', 'three', 'counteractive']
     prev = None
@@ -46,7 +48,7 @@ def _run_all_tests():
     try:
         badprev = -1
         Word(value='frog', prev=badprev)
-        logger.error('Able to init {} with prev={}.'.format(Word.__name__, badprev.__class__))
+        raise AssertionError('Able to init {} with prev={}.'.format(Word.__name__, badprev.__class__))
     except ValueError:
         pass
 
@@ -61,7 +63,21 @@ def _run_all_tests():
     assert Word(u'foo') == Word('foo')
 
     test_data = get_all_test_data()[:200]
-    bigword = Word(value=test_data)
+    assert Word(value=test_data)
+
+def test_char_classification():
+    test_pairs = [
+        (u'漢', Kanji),
+        (u'ひ', Hiragana),
+        (u'マ', Katakana),
+    ]
+    for char, klass in test_pairs:
+        assert get_char_class(char) is klass
+        assert char in klass
+        assert char in klass()
+
 
 if __name__ == '__main__':
-    _run_all_tests()
+    test_class_Char()
+    test_class_Word()
+    test_char_classification()
