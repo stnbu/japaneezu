@@ -3,7 +3,7 @@
 import hotshot, hotshot.stats
 from main import *
 from random import randint
-from data import *
+from tests import *
 
 def f():
     test_data = get_all_test_data()

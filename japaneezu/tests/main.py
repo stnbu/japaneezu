@@ -2,11 +2,24 @@
 
 import logging
 import sys
+import os
 logger = logging.getLogger(__name__)
 from glob import glob
 from guess import guess
-from main import *
-from data import *
+sys.path.insert(1, '/Users/miburr/japaneezu')
+from japaneezu import *  # FIXME relative
+
+_TEST_DATA = None
+def get_all_test_data():
+    global _TEST_DATA
+    if _TEST_DATA is None:
+        files = '{}/data/*'.format(os.path.dirname(__file__)).replace('/', os.sep)
+        files = glob(files)
+        files = [open(f, 'rb') for f in files]
+        _TEST_DATA = ''
+        for _file in files:
+            _TEST_DATA += _file.read().decode(encoding='UTF-16-LE', errors='replace')
+    return _TEST_DATA
 
 def _run_all_tests():
 
@@ -37,18 +50,17 @@ def _run_all_tests():
     except ValueError:
         pass
 
-    if False:
-        w = Word(u'日本語能力試験')
-        assert len(w.subwords) == 3
-        one = u'日本語'
-        two = u'能力'
-        three = u'試験'
-        assert one == w.subwords[0]
-        assert two == w.subwords[1]
-        assert three == w.subwords[2]
-        assert Word(u'foo') == Word('foo')
+    w = Word(u'日本語能力試験')
+    assert len(w.subwords) == 3
+    one = u'日本語'
+    two = u'能力'
+    three = u'試験'
+    assert one == w.subwords[0]
+    assert two == w.subwords[1]
+    assert three == w.subwords[2]
+    assert Word(u'foo') == Word('foo')
 
-    test_data = get_all_test_data()
+    test_data = get_all_test_data()[:200]
     bigword = Word(value=test_data)
 
 if __name__ == '__main__':
