@@ -7,9 +7,13 @@ logger = logging.getLogger('ipython')
 logger.setLevel('DEBUG')
 from igo.Tagger import Tagger
 
-DB = {}
-db_get = lambda k: DB.get(k, None)
-db_add = lambda k, v: DB.update({k: v})
+WORD_DB = {}
+word_db_get = lambda k: WORD_DB.get(k, None)
+word_db_add = lambda k, v: WORD_DB.update({k: v})
+
+CHAR_DB = {}
+char_db_get = lambda k: CHAR_DB.get(k, None)
+char_db_add = lambda k, v: CHAR_DB.update({k: v})
 
 tagger = None
 def get_tagger():
@@ -18,7 +22,7 @@ def get_tagger():
         tagger = Tagger('ipadic')
     return tagger
 
-char_classes = set()
+char_classes = []
 
 def _contains_char(obj, char):
     num = ord(char)
@@ -30,12 +34,12 @@ class CharClassMaintainer(type):
         global char_classes
         classobj = type.__new__(cls, classname, bases, classdict)
         if classobj.__name__ != 'CharClass':  # Don't add the base class
-            char_classes.add(classobj)
+            char_classes.append(classobj)
         return classobj
 
     __contains__ = _contains_char
 
-class CharClass(object):
+class CharClass(unicode):
 
     __metaclass__ = CharClassMaintainer
     __contains__ = _contains_char
@@ -50,13 +54,17 @@ class Hiragana(CharClass):
 class Katakana(CharClass):
     unichr_range = ord(u'ア'), ord(u'ン')
 
+# Order of definition matters. This is declared last.
+class OtherChar(CharClass):
+    unichr_range = 0, 0x10000 - 1  # FIXME
+
 def get_char_class(char):
     global char_classes
     for klass in char_classes:
         if char in klass:
             return klass
     else:
-        raise ValueError(u'Could not find appropriate CharClass for {}'.format(char))
+        raise ValueError(u'Could not find appropriate CharClass for {}. How did you get here?!'.format(char))
 
 class Token(object):
 
@@ -89,13 +97,23 @@ class Word(Token):
         #logger.debug('instantiating {}'.format(repr(self)))
         self.subwords = []
         self.top = top
-        if db_get(self.value) is not None:
-            self = db_get(self.value)
+
+        if word_db_get(self.value) is not None:
+            self = word_db_get(self.value)
             return
         else:
-            db_add(self.value, self)
+            word_db_add(self.value, self)
+
+        # charify
+        new_value = u''
+        for char in self.value:
+            char = get_char_class(char)(char)
+            new_value += char
+        self.value = new_value
+
         if not self.top:
             return
+
         tagger = get_tagger()
         _prev_subword = None
         #logger.debug('Parsing out tags from {}'.format(repr(self)))
