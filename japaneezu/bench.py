@@ -1,13 +1,15 @@
 # -*- Mode: python; encoding: UTF-8;tab-width: 4; indent-tabs-mode:nil; -*- vim: ai ts=4 sts=4 et sw=4 ft=python
 
 import hotshot, hotshot.stats
-from tests import _get_test_data
 from main import *
 from random import randint
+from data import *
 
 def f():
-    test_data = _get_test_data()
-    test_data = test_data[:2000]
+    test_data = get_all_test_data()
+    limit = 1000.0
+    print 'actual test data', len(test_data) / limit, 'times bigger'
+    test_data = test_data[:int(limit)]
     bigword = Word(value=test_data)
 
 pro_file = '/tmp/.Word.{}.prof'.format(randint(0, 2**32))
