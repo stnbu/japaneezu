@@ -13,7 +13,6 @@ word_db_add = lambda k, v: WORD_DB.update({k: v})
 
 CHAR_DB = {}
 char_db_get = lambda k: CHAR_DB.get(k, None)
-char_db_add = lambda k, v: CHAR_DB.update({k: v})
 
 tagger = None
 def get_tagger():
@@ -23,6 +22,24 @@ def get_tagger():
     return tagger
 
 char_classes = []
+
+class Stats(object):
+
+    def __init__(self, value):
+        self.value = value
+        self.count = 1
+
+class CharStats(Stats):
+    pass
+
+class WordStats(Stats):
+    pass
+
+def char_db_add(char):
+    global CHAR_DB
+    char_stats = CharStats(char)
+    CHAR_DB.update({char: char_stats})
+    return char_stats
 
 def _contains_char(obj, char):
     num = ord(char)
@@ -104,10 +121,18 @@ class Word(Token):
         else:
             word_db_add(self.value, self)
 
-        # charify
+        # FIXME things are double-counted because of the subword thing
         new_value = u''
         for char in self.value:
-            char = get_char_class(char)(char)
+            if char_db_get(char) is not None:
+                record = char_db_get(char)
+                record.count += 1
+                klass = record.klass
+            else:
+                klass = get_char_class(char)
+                record = char_db_add(char)
+                record.klass = klass
+                char = klass(char)
             new_value += char
         self.value = new_value
 
