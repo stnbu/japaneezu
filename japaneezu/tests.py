@@ -6,18 +6,7 @@ logger = logging.getLogger(__name__)
 from glob import glob
 from guess import guess
 from main import *
-
-_test_data = None
-def _get_test_data():
-    global _test_data
-    files = '/Users/miburr/tmp/xx/*'
-    files = glob(files)
-    files = [open(f, 'rb') for f in files]
-    if _test_data is None:
-        _test_data = ''
-        for _file in files:
-            _test_data += _file.read().decode(encoding='UTF-16-LE', errors='replace')
-    return _test_data
+from data import *
 
 def _run_all_tests():
 
@@ -59,7 +48,7 @@ def _run_all_tests():
         assert three == w.subwords[2]
         assert Word(u'foo') == Word('foo')
 
-    test_data = _get_test_data()
+    test_data = get_all_test_data()
     bigword = Word(value=test_data)
 
 if __name__ == '__main__':
