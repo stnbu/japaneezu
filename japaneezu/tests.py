@@ -5,7 +5,7 @@ import sys
 logger = logging.getLogger(__name__)
 from glob import glob
 from guess import guess
-from foo import *
+from main import *
 
 _test_data = None
 def _get_test_data():
@@ -17,10 +17,9 @@ def _get_test_data():
         _test_data = ''
         for _file in files:
             _test_data += _file.read().decode(encoding='UTF-16-LE', errors='replace')
-            break  ## ONE FILE FIXME
     return _test_data
 
-def tests():
+def _run_all_tests():
 
     text = u'あいうえおイロハ漢字'
 
@@ -64,4 +63,4 @@ def tests():
     bigword = Word(value=test_data)
 
 if __name__ == '__main__':
-    tests()
+    _run_all_tests()
