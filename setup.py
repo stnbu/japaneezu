@@ -9,6 +9,7 @@ setup_kwargs = {
     'author_email': 'meburr@gmail.com',
     'url': 'http://tbd.example.com',
     'packages': ['japaneezu', 'japaneezu.tests'],
+    'requires': ['igo-python'],
 }
 
 setup(**setup_kwargs)
