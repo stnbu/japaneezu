@@ -61,17 +61,19 @@ class CharClass(unicode):
     __metaclass__ = CharClassMaintainer
     __contains__ = _contains_char
 
+###
+# Unicode magic numbers courtesy: http://en.wikipedia.org/wiki/Japanese_writing_system
 
 class Kanji(CharClass):
-    unichr_range = ord(u'一'), 29000  # FIXME
+    unichr_range = 0x4E00, 0x9FBF
 
 class Hiragana(CharClass):
-    unichr_range = ord(u'あ'), ord(u'ん')
+    unichr_range = 0x3040, 0x309F
 
 class Katakana(CharClass):
-    unichr_range = ord(u'ア'), ord(u'ン')
+    unichr_range = 0x30A0, 0x30FF
 
-# Order of definition matters. This is declared last.
+# Order of definition matters. This is declared last.  # <--  FIXME
 class OtherChar(CharClass):
     unichr_range = 0, 0x10000 - 1  # FIXME
 
