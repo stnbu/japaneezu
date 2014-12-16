@@ -13,17 +13,21 @@ config = {
 
 class JapanezuReader(object):
 
-    palette = Palette()
-    palette.body = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY, mono=colors.STANDOUT)
-    palette.header = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED, mono=colors.BOLD)
-    palette.line = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY, mono=colors.STANDOUT)
-    palette.button_normal = PaletteEntry(foreground=colors.LIGHT_GRAY, background=colors.DARK_BLUE)
-    palette.button_select = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_GREEN)
+    palette.dialog_body = PaletteEntry(foreground=colors.DARK_BLUE, background=colors.WHITE)
+    palette.dialog_header = PaletteEntry(foreground=colors.DARK_MAGENTA, background=colors.LIGHT_GREEN)
+    palette.dialog_footer = PaletteEntry(foreground=colors.DARK_MAGENTA, background=colors.WHITE)
+    palette.dialog_border = PaletteEntry(foreground=colors.DARK_RED, background=colors.WHITE)
+    palette.button = PaletteEntry(foreground=colors.LIGHT_GRAY, background=colors.DARK_BLUE)
+    palette.reveal_focus = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
+
+    palette.body = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
+    palette.header = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
+    palette.line = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
 
     def __init__(self):
-        self.header = urwid.AttrWrap(urwid.Text('header'), 'header')
+        self.header = urwid.AttrMap(urwid.Text('header'), self.palette.header.name)
         self.reader = urwid.ListBox(urwid.SimpleListWalker([]))
-        self.topmost = urwid.Frame(urwid.AttrWrap(self.reader, 'body'), header=self.header)
+        self.topmost = urwid.Frame(urwid.AttrMap(self.reader, self.palette.body.name), header=self.header)
 
     def main(self, *args, **kwargs):
         self.loop = urwid.MainLoop(
@@ -47,13 +51,17 @@ class JapanezuReader(object):
         if k.lower() == 'q':
             if not config['prompt_on_quit']:
                 self.quit()
-            d = dialog.YesNoDialog(30, 10, data='Are you sure you want to quit?',
-                            header_text='Quitting Application', loop=self.loop)
+            d = dialog.YesNoDialog(width=30,
+                                   height=10,
+                                   data='Are you sure you want to quit?',
+                                   header_text='Quitting Application',
+                                   loop=self.loop,
+                                   palette=self.palette)
             urwid.connect_signal(d, 'commit', self.user_quit)
             d.show()
 
 def main():
-    JapanezuReader().main()
+    curses.wrapper(JapanezuReader().main)
 
 if __name__ == '__main__':
     main()
