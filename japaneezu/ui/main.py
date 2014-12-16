@@ -13,13 +13,13 @@ config = {
 
 class JapanezuReader(object):
 
+    palette = Palette()
     palette.dialog_body = PaletteEntry(foreground=colors.DARK_BLUE, background=colors.WHITE)
     palette.dialog_header = PaletteEntry(foreground=colors.DARK_MAGENTA, background=colors.LIGHT_GREEN)
     palette.dialog_footer = PaletteEntry(foreground=colors.DARK_MAGENTA, background=colors.WHITE)
     palette.dialog_border = PaletteEntry(foreground=colors.DARK_RED, background=colors.WHITE)
     palette.button = PaletteEntry(foreground=colors.LIGHT_GRAY, background=colors.DARK_BLUE)
     palette.reveal_focus = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
-
     palette.body = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
     palette.header = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
     palette.line = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
