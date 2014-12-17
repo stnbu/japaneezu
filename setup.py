@@ -27,14 +27,20 @@ setup(
     license='MIT',
     bugtrack_url='https://github.com/stnbu/{0}/issues'.format(NAME),
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console :: Curses',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: Japanese',
         'Programming Language :: Python :: 2',
     ],
+    requires=['urwid', 'urwid_utils'],
     packages=[NAME, NAME+'.ui'],
     keywords=['language', 'study', 'japanese', 'parsing'],
     test_suite='nose.collector',
     test_requires=['nose'],
+    entry_points={
+    'console_scripts': [
+        '{0} = {0}.ui.main:main'.format(NAME),
+    ],
+    'gui_script': []},
 )
