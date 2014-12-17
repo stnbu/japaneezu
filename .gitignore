@@ -3,3 +3,4 @@ MANIFEST
 japaneezu/tests/data
 .gitignore
 ipadic
+ipadic_gae
