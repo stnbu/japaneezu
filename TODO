@@ -1,6 +1,0 @@
-
-Each char get's an *instance*. The stats for that char belong in that instance.
-Each word get's an *instance*. The stats for that word belong in that instance.
-Collect everyone's stats centrally somewhere.
-Have a nice way of retrieving data (dictionaries, etc.)
-See if django has a "mobile" version (for phones, etc)

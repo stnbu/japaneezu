@@ -1,15 +1,40 @@
+# -*- coding: utf-8 -*-
 
-from distutils.core import setup
+from setuptools import setup
 
-setup_kwargs = {
-    'name': 'japaneezu',
-    'version': '0.0.1',
-    'description': 'A Very Beta Language Study Aide',
-    'author': 'Mike Burr',
-    'author_email': 'meburr@gmail.com',
-    'url': 'http://tbd.example.com',
-    'packages': ['japaneezu', 'japaneezu.tests'],
-    'requires': ['igo-python'],
-}
+import japaneezu
 
-setup(**setup_kwargs)
+# README.rst dynamically generated:
+with open('README.rst', 'w') as f:
+    f.write(japaneezu.__doc__)
+
+NAME = 'japaneezu'
+
+def read(file):
+    with open(file, 'r') as f:
+        return f.read().strip()
+
+setup(
+    name=NAME,
+    version=read('VERSION'),
+    description='A curses/console foreign language language study tool. (Currently limited to Japanese.)',
+    long_description=read('README.rst'),
+    author='Mike Burr',
+    author_email='mburr@unintuitive.org',
+    url='https://github.com/stnbu/{0}'.format(NAME),
+    download_url='https://github.com/stnbu/{0}/archive/master.zip'.format(NAME),
+    provides=[NAME],
+    license='MIT',
+    bugtrack_url='https://github.com/stnbu/{0}/issues'.format(NAME),
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console :: Curses',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: Japanese',
+        'Programming Language :: Python :: 2',
+    ],
+    packages=[NAME, NAME+'.ui'],
+    keywords=['language', 'study', 'japanese', 'parsing'],
+    test_suite='nose.collector',
+    test_requires=['nose'],
+)
