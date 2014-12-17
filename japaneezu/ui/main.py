@@ -46,11 +46,12 @@ class JapanezuReader(object):
 
         columns = []
 
-        c = widgets.JapanezuText(content=u''.join([c for c,r in _example_text]), reading=u'')
-        columns.append(c)
-        #columns.append(('weight', int(sys.argv[1]), urwid.Text(' '*300, wrap='clip')))
+        #c = widgets.JapanezuText(content=u''.join([c for c,r in _example_text]), reading=u'')
+        sorry = urwid.Text(u'I am very sorry. I wish there was more to show you. Much work has been done, but the '
+                           'pieces have yet to be put together. Please feel free to help out!\n\nPress "q" to quit.')
+        #columns.append(c)
+        columns.append(sorry)
         rows = urwid.Columns(columns)
-        #rows = urwid.Padding(rows, align='left', width='pack', right=1)
 
         self.reader = urwid.ListBox(urwid.SimpleListWalker([rows]))
 
