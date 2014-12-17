@@ -12,4 +12,3 @@ Multi-language support is planned, but currently Japanese is the only supported 
 """
 
 from main import *
-import tests
