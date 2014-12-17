@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import urwid
 import curses
 from collections import OrderedDict
 from urwid_utils.palette import PaletteEntry, Palette
 from urwid_utils import dialog, colors
-
+from japaneezu.ui import widgets
 
 config = {
-    'prompt_on_quit': True,
+    'prompt_on_quit': False,
 }
 
 class JapanezuReader(object):
@@ -22,12 +23,41 @@ class JapanezuReader(object):
     palette.reveal_focus = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
     palette.body = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
     palette.header = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
+    palette.footer = PaletteEntry(foreground=colors.WHITE, background=colors.DARK_RED)
     palette.line = PaletteEntry(foreground=colors.BLACK, background=colors.LIGHT_GRAY)
 
     def __init__(self):
-        self.header = urwid.AttrMap(urwid.Text('header'), self.palette.header.name)
-        self.reader = urwid.ListBox(urwid.SimpleListWalker([]))
-        self.topmost = urwid.Frame(urwid.AttrMap(self.reader, self.palette.body.name), header=self.header)
+
+        _example_text = [
+            (u'アメリカ', u''),
+            (u'西海岸', u'にしかいがん'),
+            (u'に', u''),
+            (u'おける', u''),
+            (u'主要空港', u'じゅうようくうこう'),
+            (u'の', u''),
+            (u'1つ', u'ひとつ'),
+            (u'で、ユナイテッド', u''),
+            (u'航空', u'こうくう'),
+            #(u'とヴァージン・アメリカの', u''),
+        ]
+
+        self.header = urwid.AttrMap(urwid.Text(u''), self.palette.header.name)
+        self.footer = urwid.AttrMap(urwid.Text(u''), self.palette.footer.name)
+
+        columns = []
+
+        c = widgets.JapanezuText(content=u''.join([c for c,r in _example_text]), reading=u'')
+        columns.append(c)
+        #columns.append(('weight', int(sys.argv[1]), urwid.Text(' '*300, wrap='clip')))
+        rows = urwid.Columns(columns)
+        #rows = urwid.Padding(rows, align='left', width='pack', right=1)
+
+        self.reader = urwid.ListBox(urwid.SimpleListWalker([rows]))
+
+        self.topmost = urwid.Frame(
+            body=urwid.AttrMap(self.reader, self.palette.body.name),
+            header=self.header,
+            footer=self.footer,)
 
     def main(self, *args, **kwargs):
         self.loop = urwid.MainLoop(

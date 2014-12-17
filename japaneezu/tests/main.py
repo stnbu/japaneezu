@@ -7,7 +7,9 @@ logger = logging.getLogger(__name__)
 from glob import glob
 from guess import guess
 sys.path.insert(1, '/Users/miburr/japaneezu')
+import codecs
 from japaneezu import *  # FIXME relative
+from igo.Tagger import Tagger
 
 _TEST_DATA = None
 def get_all_test_data():
@@ -15,10 +17,11 @@ def get_all_test_data():
     if _TEST_DATA is None:
         files = '{}/data/*'.format(os.path.dirname(__file__)).replace('/', os.sep)
         files = glob(files)
-        files = [open(f, 'rb') for f in files]
+        print files
+        files = [codecs.open(f, mode='r', encoding='utf-8', errors='strict') for f in files]
         _TEST_DATA = ''
         for _file in files:
-            _TEST_DATA += _file.read().decode(encoding='UTF-16-LE', errors='replace')
+            _TEST_DATA += _file.read()   #.decode(encoding='UTF-16-LE', errors='replace')
     return _TEST_DATA
 
 def test_class_Char():
@@ -78,6 +81,8 @@ def test_char_classification():
 
 
 if __name__ == '__main__':
-    test_class_Char()
-    test_class_Word()
-    test_char_classification()
+    data = get_all_test_data()
+    tagger = Tagger('ipadic')
+    one = u'日本語'
+    atags = Atags = tags = tagger.parse(one)
+    #print data
