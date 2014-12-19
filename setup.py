@@ -25,7 +25,6 @@ setup(
     download_url='https://github.com/stnbu/{0}/archive/master.zip'.format(NAME),
     provides=[NAME],
     license='MIT',
-    bugtrack_url='https://github.com/stnbu/{0}/issues'.format(NAME),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console :: Curses',
@@ -37,7 +36,6 @@ setup(
     packages=[NAME, NAME+'.ui'],
     keywords=['language', 'study', 'japanese', 'parsing'],
     test_suite='nose.collector',
-    test_requires=['nose'],
     entry_points={
     'console_scripts': [
         '{0} = {0}.ui.main:main'.format(NAME),

@@ -8,25 +8,26 @@ import re
 logger = logging.getLogger(__name__)
 
 
-class RulesParser(object):
+class RulesParser(list):
 
     verb_rule_stanza_header_cre = re.compile(r'^\s*(?P<verb_type>V\d+)\s*-\s*verb\s*$')
     conj_rule_splitter_cre = re.compile(r'\s*->\s*')
 
     def __init__(self, text):
-        self.text = text
-        self.rules = []
+        self.raw_text = text
+        list.__init__(self)
+        self._init_rules()
 
     def ignore_line(self, line):
         return not line.strip()
 
-    def parse(self):
+    def _init_rules(self):
         rules_group = []
         verb_type = None
         def append_rule_group(verb_type, rules_group):
-            self.rules.append((verb_type, rules_group))
+            self.append((verb_type, rules_group))
             rules_group = []
-        for line in self.text.splitlines():
+        for line in self.raw_text.splitlines():
             if self.ignore_line(line):
                 continue
             m = self.verb_rule_stanza_header_cre.match(line)
@@ -44,7 +45,10 @@ class RulesParser(object):
             append_rule_group(verb_type, rules_group)  # don't forget the final rule group
 
 
-class Conjugation(object):
+class MetaWord(object):
+    """A ``MetaWord`` represents a class of words with the same conjugation rules. It's capable of representing any
+    legal conjugation and determining whether a word is conjugated properly.
+    """
 
     def __init__(self, name, columns):
         self.name = name
@@ -52,12 +56,13 @@ class Conjugation(object):
         self.summary = columns[1]
         self.verb_classes = columns[2]
         self.rules = RulesParser(text=columns[3])
-        self.rules.parse()
 
         if len(columns) > 4:
             raise ValueError('Cannot handle more than 4 columns')
 
-class Conjugations(dict):
+class MetaWords(dict):
+    """A ``MetaWords`` represents a collection of ``MetaWord`` instances.
+    """
 
     def __init__(self, table=None):
         dict.__init__(self)
@@ -73,8 +78,8 @@ class Conjugations(dict):
         table = d
 
         for row in table:
-            conjugation = Conjugation(name=row[0], columns=row[1:])
-            self[conjugation.name] = conjugation
+            metaword = MetaWord(name=row[0], columns=row[1:])
+            self[metaword.name] = metaword
 
     def __getattribute__(self, name):
         if name in self:
@@ -144,15 +149,16 @@ class ParsedHumanLanguage(object):
             info = info.decode(encoding='utf8').replace(r'\s', u' ')
             info = eval(info, {}, {})
             info = AttrItemDict(info)
-            self.nodes.append(node)
             if node is None:
                 break
+            self.nodes.append(node)
             node.info = info
             node = node.next
 
 
 if __name__ == '__main__':
     from japaneezu.data import conjugation_rules_table, test_ja_text
-    c = Conjugations(table=conjugation_rules_table)
+    c = MetaWords(table=conjugation_rules_table)
     h = ParsedHumanLanguage(data=test_ja_text)
+    import pudb; pudb.set_trace()  # XXX BREAKPOINT
 
